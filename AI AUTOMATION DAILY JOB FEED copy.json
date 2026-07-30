@@ -1,0 +1,1041 @@
+{
+  "name": "AI AUTOMATION DAILY JOB FEED copy",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        96
+      ],
+      "id": "20ae8587-cf98-490d-b5bd-1f5d4e1ad4fd",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        448,
+        208
+      ],
+      "id": "bae958f8-8fda-4af7-aa40-6cd6990f407e",
+      "name": "Get dataset items",
+      "credentials": {
+        "apifyApi": {
+          "id": "LDcvZSMd932YlQQq",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I",
+          "mode": "list",
+          "cachedResultName": "automated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1368737895,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit#gid=1368737895"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url ": "={{ $json.url }}",
+            "date": "={{ $json.date_posted_display }}",
+            "Source": "={{ $json.Source }}",
+            "Details": "={{ $json.Title }}"
+          },
+          "matchingColumns": [
+            "url "
+          ],
+          "schema": [
+            {
+              "id": "url ",
+              "displayName": "url ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Details",
+              "displayName": "Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        -80
+      ],
+      "id": "bbf63566-9b62-449f-84db-20f164ad0d4e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tzBIMvuA1F56dfVW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f830afc1-98be-453d-b9ae-0aa327a4ad9f",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "20438293-d242-424d-85ad-961e0c115b63",
+              "name": "date_posted",
+              "value": "={{ $json.date_posted }}",
+              "type": "string"
+            },
+            {
+              "id": "cbb1130f-b6b4-4fae-b87c-06fa3c41bb7d",
+              "name": "Source",
+              "value": "={{ $json._source }}",
+              "type": "string"
+            },
+            {
+              "id": "264c60fc-3183-4ba4-8afa-fa858c19bfc3",
+              "name": "Details",
+              "value": "={{ $json.description_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        208
+      ],
+      "id": "a2b3f833-b91c-4381-81f6-72c24aca8b57",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9f6a0c19-d045-4bd8-bb95-11a9bdc745ea",
+              "leftValue": "={{ $json.date_posted }}",
+              "rightValue": "={{ $now.minus({ hours: 24 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        208
+      ],
+      "id": "387993f9-2e13-4bcb-866a-ed253b841bea",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I",
+          "mode": "list",
+          "cachedResultName": "automated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "job type",
+              "displayName": "job type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "shroten url",
+              "displayName": "shroten url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        320
+      ],
+      "id": "748bb4d4-74d0-468a-82dc-31d737bc0b7b",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tzBIMvuA1F56dfVW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const raw = item.json.date_posted;\n  return {\n    json: {\n      ...item.json,\n      date_posted: raw ? DateTime.fromISO(raw).toFormat('MMMM d, yyyy') : ''\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        144
+      ],
+      "id": "34036579-3f3c-47c1-8a1a-6d1232f0fc59",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "c8fb9409-d1ae-4fc7-ab2d-192bb2a3a1b9",
+      "name": "Get dataset items1",
+      "credentials": {
+        "apifyApi": {
+          "id": "LDcvZSMd932YlQQq",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "RcgVNlYQllXOBkgun",
+          "mode": "id"
+        },
+        "customBody": "{\n    \"includeCompanyDetails\": true,\n    \"includeSalary\": true,\n    \"keyword\": \"Workflow Automation, n8n, Make automation, AI automation\",\n    \"proxyEnabled\": true,\n    \"remoteOnly\": true\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -80
+      ],
+      "id": "17802664-97c0-4659-af45-0ac41bcdfcc5",
+      "name": "Jobright",
+      "credentials": {
+        "apifyApi": {
+          "id": "LDcvZSMd932YlQQq",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "hvx19r6H16Tnh5Yqc",
+          "mode": "id"
+        },
+        "customBody": "{\n    \"keyword\": \"AI Automation\",\n    \"max_pages\": 3,\n    \"posted_date\": \"24h\",\n    \"proxyConfiguration\": {\n        \"useApifyProxy\": false\n    },\n    \"results_wanted\": 20\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        224,
+        208
+      ],
+      "id": "610bdf22-e83b-447c-a164-8fd0fb3d8047",
+      "name": "JobberMan",
+      "credentials": {
+        "apifyApi": {
+          "id": "LDcvZSMd932YlQQq",
+          "name": "Apify account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f830afc1-98be-453d-b9ae-0aa327a4ad9f",
+              "name": "Title",
+              "value": "={{ $json.jobTitle }}",
+              "type": "string"
+            },
+            {
+              "id": "20438293-d242-424d-85ad-961e0c115b63",
+              "name": "date_posted",
+              "value": "={{  $json.postedDate }}",
+              "type": "string"
+            },
+            {
+              "id": "cbb1130f-b6b4-4fae-b87c-06fa3c41bb7d",
+              "name": "Source",
+              "value": "={{  $json.sourcePortal }}",
+              "type": "string"
+            },
+            {
+              "id": "264c60fc-3183-4ba4-8afa-fa858c19bfc3",
+              "name": "Details",
+              "value": "={{ $json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "43529275-f3b1-4f83-80c7-32bc0c50e535",
+              "name": "url",
+              "value": "={{ $json.applyUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -80
+      ],
+      "id": "7e7ac1e6-f2fc-4992-98d0-ef21fd1401d0",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseRelativeTime(text, referenceTime) {\n  if (!text) return null;\n\n  const isoCheck = DateTime.fromISO(text);\n  if (isoCheck.isValid) return isoCheck;\n\n  const match = text.match(/(\\d+)\\s*(minute|hour|day|week|month)s?\\s*ago/i);\n  if (!match) return null;\n\n  const value = parseInt(match[1], 10);\n  const unit = match[2].toLowerCase();\n\n  const unitMap = {\n    minute: 'minutes',\n    hour: 'hours',\n    day: 'days',\n    week: 'weeks',\n    month: 'months'\n  };\n\n  return referenceTime.minus({ [unitMap[unit]]: value });\n}\n\nconst referenceTime = $now;\n\nreturn items.map(item => {\n  const parsedDate = parseRelativeTime(item.json.date_posted, referenceTime);\n  return {\n    json: {\n      ...item.json,\n      date_posted: parsedDate ? parsedDate.toISO() : null,           // for filtering\n      date_posted_display: parsedDate ? parsedDate.toFormat('MMMM d, yyyy') : ''  // for display\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -80
+      ],
+      "id": "86028d78-cb3c-4d78-8961-80ce8a3edd25",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I",
+          "mode": "list",
+          "cachedResultName": "automated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1368737895,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wtEovOKfZB5XGF78bgdyqMOsGq3bpm3dM1ImWdu5o5I/edit#gid=1368737895"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url ": "={{ $json.url }}",
+            "date": "={{ $json.date_posted }}",
+            "Source": "={{ $json.Source }}",
+            "Details": "={{ $json.Details }}"
+          },
+          "matchingColumns": [
+            "url "
+          ],
+          "schema": [
+            {
+              "id": "url ",
+              "displayName": "url ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Details",
+              "displayName": "Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        144
+      ],
+      "id": "69dbff5d-8b57-4733-b139-5d4d73ff130b",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tzBIMvuA1F56dfVW",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Joright Daily Automated Script\n",
+        "height": 272,
+        "width": 1600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -208
+      ],
+      "id": "a63f617e-35d5-4aee-b3aa-1d15d45f6ff3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9f6a0c19-d045-4bd8-bb95-11a9bdc745ea",
+              "leftValue": "={{ $json.date_posted }}",
+              "rightValue": "= {{ $now.minus({ hours: 12 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        -80
+      ],
+      "id": "b484d69c-bde6-4615-aeae-04a7cedf443a",
+      "name": "Checking the time"
+    },
+    {
+      "parameters": {
+        "content": "## JobberMan Daily Automated Script\n",
+        "height": 368,
+        "width": 1648,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        112
+      ],
+      "id": "0bbf9e4e-4bab-4dec-b3fc-4e67235d2b73",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-07-30T10:35:11.789-04:00",
+          "Readable date": "July 30th 2026, 10:35:11 am",
+          "Readable time": "10:35:11 am",
+          "Day of week": "Thursday",
+          "Year": "2026",
+          "Month": "July",
+          "Day of month": "30",
+          "Hour": "10",
+          "Minute": "35",
+          "Second": "11",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Jobright": [
+      {
+        "json": {
+          "id": "BWdYqgARgoxe1MQKo",
+          "actId": "RcgVNlYQllXOBkgun",
+          "userId": "9ZxSEfhJJhVahwVds",
+          "startedAt": "2026-07-30T15:09:47.860Z",
+          "finishedAt": "2026-07-30T15:15:06.094Z",
+          "status": "SUCCEEDED",
+          "statusMessage": "Finished! Total 11 requests: 11 succeeded, 0 failed.",
+          "isStatusMessageTerminal": true,
+          "meta": {
+            "origin": "API",
+            "userAgent": "n8n"
+          },
+          "stats": {
+            "inputBodyLen": 272,
+            "migrationCount": 0,
+            "rebootCount": 0,
+            "restartCount": 0,
+            "durationMillis": 318087,
+            "resurrectCount": 0,
+            "runTimeSecs": 318.087,
+            "metamorph": 0,
+            "computeUnits": 0.08696861111111112,
+            "memAvgBytes": 504159346.2417362,
+            "memMaxBytes": 786153472,
+            "memCurrentBytes": 0,
+            "cpuAvgUsage": 12.625759691546374,
+            "cpuMaxUsage": 97.15170093457944,
+            "cpuCurrentUsage": 0,
+            "netRxBytes": 5489030,
+            "netTxBytes": 753278
+          },
+          "options": {
+            "build": "1.0.2",
+            "timeoutSecs": 3600,
+            "memoryMbytes": 1024,
+            "maxTotalChargeUsd": 4.786497,
+            "maxItems": 1199,
+            "isMaxTotalChargeUsdSetByUser": false,
+            "diskMbytes": 2048
+          },
+          "buildId": "kh8PO2aTTB65tX4fM",
+          "exitCode": 0,
+          "defaultKeyValueStoreId": "Wz9ZrZ2jBoFuMjhqR",
+          "defaultDatasetId": "e7U8CfKAAJLNDAQkH",
+          "defaultRequestQueueId": "WUaydOkuzds1hbre1",
+          "storageIds": {
+            "keyValueStores": {
+              "default": "Wz9ZrZ2jBoFuMjhqR"
+            },
+            "datasets": {
+              "default": "e7U8CfKAAJLNDAQkH"
+            },
+            "requestQueues": {
+              "default": "WUaydOkuzds1hbre1"
+            }
+          },
+          "pricingInfo": {
+            "minimalMaxTotalChargeUsd": null,
+            "isPPEPlatformUsagePaidByUser": true,
+            "pricingModel": "PAY_PER_EVENT",
+            "isPriceChangeNotificationSuppressed": false,
+            "startedAt": "2026-07-03T06:56:27.972Z",
+            "createdAt": "2026-07-03T06:56:45.969Z",
+            "apifyMarginPercentage": 0.2,
+            "pricingPerEvent": {
+              "actorChargeEvents": {
+                "apify-actor-start": {
+                  "eventTitle": "Actor Start",
+                  "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+                  "isOneTimeEvent": true,
+                  "eventPriceUsd": 0.00005
+                },
+                "apify-default-dataset-item": {
+                  "eventTitle": "result",
+                  "eventDescription": "Single result in the default dataset.",
+                  "isOneTimeEvent": false,
+                  "eventPriceUsd": 0.00399
+                }
+              }
+            }
+          },
+          "chargedEventCounts": {
+            "apify-actor-start": 1,
+            "apify-default-dataset-item": 9
+          },
+          "platformUsageBillingModel": "USER",
+          "accountedChargedEventCounts": {
+            "apify-actor-start": 1,
+            "apify-default-dataset-item": 9
+          },
+          "standby": null,
+          "integrationTracking": {
+            "platform": "n8n",
+            "appId": null,
+            "isAiTool": false
+          },
+          "generalAccess": "FOLLOW_USER_SETTING",
+          "buildNumber": "1.0.2",
+          "containerUrl": "https://tenyxqpyewts.runs.apify.net",
+          "usage": {
+            "ACTOR_COMPUTE_UNITS": 0.08696861111111112,
+            "DATASET_READS": 0,
+            "DATASET_WRITES": 10,
+            "KEY_VALUE_STORE_READS": 1,
+            "KEY_VALUE_STORE_WRITES": 9,
+            "KEY_VALUE_STORE_LISTS": 0,
+            "REQUEST_QUEUE_READS": 11,
+            "REQUEST_QUEUE_WRITES": 45,
+            "DATA_TRANSFER_INTERNAL_GBYTES": 0.004809276200830936,
+            "DATA_TRANSFER_EXTERNAL_GBYTES": 0.0006142947822809219,
+            "PROXY_RESIDENTIAL_TRANSFER_GBYTES": 0.0045720357447862625,
+            "PROXY_SERPS": 0
+          },
+          "usageTotalUsd": 0.09129233094701006,
+          "usageUsd": {
+            "ACTOR_COMPUTE_UNITS": 0.017393722222222224,
+            "DATASET_READS": 0,
+            "DATASET_WRITES": 0.00005,
+            "KEY_VALUE_STORE_READS": 0.000005,
+            "KEY_VALUE_STORE_WRITES": 0.00045000000000000004,
+            "KEY_VALUE_STORE_LISTS": 0,
+            "REQUEST_QUEUE_READS": 0.000044,
+            "REQUEST_QUEUE_WRITES": 0.00045000000000000004,
+            "DATA_TRANSFER_INTERNAL_GBYTES": 0.00024046381004154684,
+            "DATA_TRANSFER_EXTERNAL_GBYTES": 0.0001228589564561844,
+            "PROXY_RESIDENTIAL_TRANSFER_GBYTES": 0.0365762859582901,
+            "PROXY_SERPS": 0
+          },
+          "consoleUrl": "https://console.apify.com/view/runs/BWdYqgARgoxe1MQKo",
+          "eventUsage": {
+            "apify-actor-start": {
+              "eventTitle": "Actor Start",
+              "eventTotalUsd": 0.00005
+            },
+            "apify-default-dataset-item": {
+              "eventTitle": "result",
+              "eventTotalUsd": 0.03591
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "JobberMan": [
+      {
+        "json": {
+          "id": "NoCDcsvqJI8zjAius",
+          "actId": "hvx19r6H16Tnh5Yqc",
+          "userId": "9ZxSEfhJJhVahwVds",
+          "startedAt": "2026-07-30T14:35:13.201Z",
+          "finishedAt": "2026-07-30T14:35:20.897Z",
+          "status": "SUCCEEDED",
+          "meta": {
+            "origin": "API",
+            "userAgent": "n8n"
+          },
+          "stats": {
+            "inputBodyLen": 126,
+            "migrationCount": 0,
+            "rebootCount": 0,
+            "restartCount": 0,
+            "durationMillis": 7583,
+            "resurrectCount": 0,
+            "runTimeSecs": 7.583,
+            "metamorph": 0,
+            "computeUnits": 0.002106388888888889,
+            "memAvgBytes": 54816041.15171677,
+            "memMaxBytes": 160423936,
+            "memCurrentBytes": 0,
+            "cpuAvgUsage": 10.148579256438293,
+            "cpuMaxUsage": 125.37242532855437,
+            "cpuCurrentUsage": 0,
+            "netRxBytes": 726968,
+            "netTxBytes": 30343
+          },
+          "options": {
+            "build": "0.0.3",
+            "timeoutSecs": 300,
+            "memoryMbytes": 1024,
+            "maxTotalChargeUsd": 4.985979,
+            "maxItems": 4985,
+            "isMaxTotalChargeUsdSetByUser": false,
+            "diskMbytes": 2048
+          },
+          "buildId": "Svui5AV8FGxljgIQZ",
+          "exitCode": 0,
+          "defaultKeyValueStoreId": "2x5rlXd87rJnahNYF",
+          "defaultDatasetId": "5NEEtwHq7OOVrXAjc",
+          "defaultRequestQueueId": "YYHa35Sq0J7WSshrk",
+          "storageIds": {
+            "keyValueStores": {
+              "default": "2x5rlXd87rJnahNYF"
+            },
+            "datasets": {
+              "default": "5NEEtwHq7OOVrXAjc"
+            },
+            "requestQueues": {
+              "default": "YYHa35Sq0J7WSshrk"
+            }
+          },
+          "pricingInfo": {
+            "minimalMaxTotalChargeUsd": 1,
+            "pricingModel": "PAY_PER_EVENT",
+            "isPriceChangeNotificationSuppressed": false,
+            "startedAt": "2026-03-15T11:51:47.091Z",
+            "createdAt": "2026-03-01T11:51:48.575Z",
+            "apifyMarginPercentage": 0.2,
+            "notifiedAboutFutureChangeAt": "2026-03-01T11:52:08.740Z",
+            "pricingPerEvent": {
+              "actorChargeEvents": {
+                "apify-actor-start": {
+                  "eventTitle": "Actor Start",
+                  "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+                  "isOneTimeEvent": true,
+                  "eventPriceUsd": 0.005
+                },
+                "apify-default-dataset-item": {
+                  "eventTitle": "result",
+                  "eventDescription": "Single result in the default dataset.",
+                  "eventPriceUsd": 0.001,
+                  "isPrimaryEvent": true
+                }
+              }
+            }
+          },
+          "chargedEventCounts": {
+            "apify-actor-start": 1,
+            "apify-default-dataset-item": 0
+          },
+          "platformUsageBillingModel": "DEVELOPER",
+          "accountedChargedEventCounts": {
+            "apify-actor-start": 1,
+            "apify-default-dataset-item": 0
+          },
+          "standby": null,
+          "integrationTracking": {
+            "platform": "n8n",
+            "appId": null,
+            "isAiTool": false
+          },
+          "generalAccess": "FOLLOW_USER_SETTING",
+          "buildNumber": "0.0.3",
+          "containerUrl": "https://fdj6eofhecxt.runs.apify.net",
+          "usageTotalUsd": 0.005,
+          "consoleUrl": "https://console.apify.com/view/runs/NoCDcsvqJI8zjAius",
+          "eventUsage": {
+            "apify-actor-start": {
+              "eventTitle": "Actor Start",
+              "eventTotalUsd": 0.005
+            },
+            "apify-default-dataset-item": {
+              "eventTitle": "result",
+              "eventTotalUsd": 0
+            }
+          },
+          "output": {
+            "overview": "https://api.apify.com/v2/datasets/5NEEtwHq7OOVrXAjc/items?view=overview&signature=MC4wLkFocUJaa2RNOXRwWlRhMHhvMnJx"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Jobright",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "JobberMan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get dataset items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jobright": {
+      "main": [
+        [
+          {
+            "node": "Get dataset items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JobberMan": {
+      "main": [
+        [
+          {
+            "node": "Get dataset items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get dataset items1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Checking the time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checking the time": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3a3ec29a-c39c-4365-b9aa-a009dd6585a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51ee086945e7169fca895c425d8a00d1132e92da67aa4ae661fe13d18cb30c3b"
+  },
+  "nodeGroups": [],
+  "id": "1xZhidWkZdKUGZHN",
+  "tags": [
+    {
+      "updatedAt": "2026-07-30T15:52:42.839Z",
+      "createdAt": "2026-07-30T15:52:42.839Z",
+      "id": "knkSa3qLecO9Pb2J",
+      "name": "JOB"
+    }
+  ]
+}
